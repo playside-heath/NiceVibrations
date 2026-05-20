@@ -6,6 +6,13 @@ exit_with_failure()
     echo "❌ $*" 1>&2 ; exit 1;
 }
 
+# Git Bash on GitHub Actions often reports `uname -s` as MINGW64_NT-* while OSTYPE is not `msys*`.
+is_windows_build_host() {
+    [[ "${OSTYPE:-}" == "msys"* || "${OSTYPE:-}" == "cygwin"* ]] && return 0
+    case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) return 0 ;; esac
+    return 1
+}
+
 TARGET=$1
 
 # Source paths
@@ -79,7 +86,7 @@ elif [ "$TARGET" = "unity-editor-plugin-host" ]; then
         echo "➡️ Copying build artifacts to Unity folder"
         cd ../
         cp target/universal/release/libnice_vibrations_editor_plugin.dylib $DEST_UNITY_MAC_PLUGIN_DIR/ || exit_with_failure "Failed to copy Unity editor plugin"
-    elif [[ "$OSTYPE" == "msys"* ]]; then
+    elif is_windows_build_host; then
         echo "➡️ Cleaning copied build artifacts"
         rm -rf $DEST_UNITY_WIN_PLUGIN_DIR/nice_vibrations_editor_plugin.dll
         echo "➡️ Building Unity editor plugin for the host system"

@@ -37,12 +37,19 @@ jobs:
     - name: Run CI script
       run: sh ci-unity-editor-plugin.sh
 
-    - uses: actions/upload-artifact@v4
+    - name: Upload Unity editor plugin (macOS)
+      if: runner.os == 'macOS'
+      uses: actions/upload-artifact@v4
       with:
-        name: unity-editor-plugins-folder
-        path: |
-          interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/Windows/x64/
-          interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/macOS/
+        name: unity-editor-plugins-folder-macos
+        path: interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/macOS/
+
+    - name: Upload Unity editor plugin (Windows)
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: unity-editor-plugins-folder-windows
+        path: interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/Windows/x64/
 
   release-sdk-and-nicevibrations-macos:
     needs: release-unity-editor-plugin
@@ -66,8 +73,9 @@ jobs:
     - name: Get Unity Editor Plugin artifacts
       uses: actions/download-artifact@v4
       with:
-        name: unity-editor-plugins-folder
-        path: interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/
+        pattern: unity-editor-plugins-folder-*
+        merge-multiple: true
+        path: .
 
     - name: Set up JDK 8
       uses: actions/setup-java@v4
@@ -130,6 +138,15 @@ jobs:
     - name: Build Nice Vibrations asset package .zip
       working-directory: interfaces/unity
       run: ./create-release-zip.sh ${{ env.RELEASE_NICEVIBRATIONS_VERSION }}
+
+    - name: Upload release zips as workflow artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: sdk-nicevibrations-release-${{ env.RELEASE_TAG }}
+        path: |
+          ./release/sdk-${{ env.RELEASE_SDK_VERSION }}.zip
+          ./release/nicevibrations-${{ env.RELEASE_NICEVIBRATIONS_VERSION }}.zip
+          ./release/nicevibrations-api-docs-${{ env.RELEASE_NICEVIBRATIONS_VERSION }}.zip
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2

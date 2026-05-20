@@ -31,6 +31,12 @@ jobs:
     - name: Build .zip
       run: ./release-haptic2ahap.sh ${{ env.RELEASE_VERSION }}
 
+    - name: Upload workflow artifact (same zip as attached to release)
+      uses: actions/upload-artifact@v4
+      with:
+        name: haptic2ahap-${{ env.RELEASE_TAG }}
+        path: ./release/${{ env.RELEASE_TAG }}.zip
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       env:

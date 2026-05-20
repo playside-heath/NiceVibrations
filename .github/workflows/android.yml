@@ -42,3 +42,11 @@ jobs:
     # Skip the connected checks in the CI script, as they require an emulator setup.
     - name: Run CI script
       run: ./ci-android.sh --skip-connected-check
+
+    - name: Upload Android library and Unity Android plugin
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-build
+        path: |
+          android-library/
+          interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/Android/libs/

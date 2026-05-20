@@ -46,3 +46,11 @@ jobs:
 
     - name: Run CI script
       run: ./ci-ios.sh
+
+    - name: Upload iOS framework and Unity iOS plugin
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-build
+        path: |
+          ios-framework/
+          interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/iOS/

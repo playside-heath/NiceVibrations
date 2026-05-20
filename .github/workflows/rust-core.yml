@@ -38,3 +38,10 @@ jobs:
 
     - name: Run CI script
       run: sh ci-rust-core.sh
+
+    - name: Upload haptic2ahap CLI (debug build)
+      uses: actions/upload-artifact@v4
+      with:
+        name: haptic2ahap-cli-${{ matrix.os }}
+        path: target/debug/haptic2ahap*
+        if-no-files-found: warn

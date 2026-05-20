@@ -110,7 +110,35 @@ jobs:
           cd ..
 
     - name: Install NDK version 21.3.6528147
-      run: sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147"
+      run: |
+        set -euo pipefail
+        SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+        export ANDROID_SDK_ROOT="$SDK_ROOT"
+        SDKMANAGER=""
+        if [ -x "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" ]; then
+          SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+        else
+          if [ -d "$SDK_ROOT/cmdline-tools" ]; then
+            found=$(find "$SDK_ROOT/cmdline-tools" -name sdkmanager -type f | head -1 || true)
+          else
+            found=""
+          fi
+          if [ -n "${found:-}" ] && [ -x "$found" ]; then
+            SDKMANAGER="$found"
+          fi
+        fi
+        if [ -z "$SDKMANAGER" ]; then
+          echo "Installing Android command-line tools (JDK 11+ compatible sdkmanager; legacy tools/ build is broken on Java 11)."
+          TMP=$(mktemp -d)
+          curl -fsSL -o "$TMP/cmdline-tools.zip" \
+            "https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip"
+          unzip -q "$TMP/cmdline-tools.zip" -d "$TMP/clt"
+          mkdir -p "$SDK_ROOT/cmdline-tools"
+          rm -rf "$SDK_ROOT/cmdline-tools/latest"
+          mv "$TMP/clt/cmdline-tools" "$SDK_ROOT/cmdline-tools/latest"
+          SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+        fi
+        yes | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --install "ndk;21.3.6528147"
 
     - name: Install Rust Android targets
       run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android

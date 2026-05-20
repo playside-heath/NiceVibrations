@@ -35,7 +35,7 @@ This folder has the iOS Framework project containing source code for the Lofelt 
 
 - Install cargo-lipo:
 
-   `cargo install cargo-lipo`
+   `cargo install cargo-lipo --locked`
 
   You don't have to run `cargo lipo` directly as this happens automatically via a script in the Xcode project for Lofelt SDK for iOS. If you ever want to do it manually the steps are under "Building the library manually" below
 

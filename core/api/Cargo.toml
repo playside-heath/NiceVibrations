@@ -6,7 +6,7 @@ edition = "2018"
 
 [lib]
 name = "lofelt_sdk"
-crate_type = ["staticlib", "cdylib"]
+crate-type = ["staticlib", "cdylib"]
 
 [dependencies]
 lib = {path = "../lib"}

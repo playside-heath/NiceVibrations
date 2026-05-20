@@ -36,8 +36,9 @@ API exported by the plugin.
 ## Dependencies
 
 The development environment setup is similar than to the one for iOS. Please check the [README](./../interfaces/ios/README.md) for more info.
-Besides the iOS setup, it is also necessary to install the Rust target for Apple Silicon:
-`rustup target add aarch64-apple-darwin`
+Besides the iOS setup, install the Rust targets used for a universal macOS binary:
+
+`rustup target add aarch64-apple-darwin x86_64-apple-darwin`
 
 ## Building
 

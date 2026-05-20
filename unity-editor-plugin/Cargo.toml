@@ -6,7 +6,7 @@ edition = "2018"
 
 [lib]
 name = "nice_vibrations_editor_plugin"
-crate_type = ["cdylib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 datamodel = {path = "../core/datamodel"}

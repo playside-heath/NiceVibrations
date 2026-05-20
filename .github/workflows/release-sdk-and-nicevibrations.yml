@@ -30,8 +30,9 @@ jobs:
           target
         key: release-sdk-and-nicevibrations-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Install rustup macOS Apple Silicon target
-      run: rustup target add aarch64-apple-darwin
+    - name: Install rustup macOS targets (universal dylib)
+      if: runner.os == 'macOS'
+      run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
     - name: Run CI script
       run: sh ci-unity-editor-plugin.sh

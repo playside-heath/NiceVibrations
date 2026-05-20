@@ -34,4 +34,18 @@ jobs:
         run: sh ci-unity-editor-plugin.sh
         shell: bash
 
+      - name: Upload Unity editor plugin (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-editor-plugin-macos
+          path: interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/macOS/
+
+      - name: Upload Unity editor plugin (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-editor-plugin-windows
+          path: interfaces/unity/NiceVibrations/Assets/NiceVibrations/Plugins/Windows/x64/
+
 

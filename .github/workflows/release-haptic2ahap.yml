@@ -10,9 +10,9 @@ jobs:
   release-haptic2ahap:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v4
       with:
         path: |
           ~/.cargo/registry
@@ -20,9 +20,9 @@ jobs:
           target
         key: release-haptic2ahap-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      # GITHUB_REF will be something like refs/tags/haptic2ahap-0.3.0. This step extracts
-      # the last part, haptic2ahap-0.3.0, into a RELEASE_TAG variable, and the version,
-      # 0.3.0, into a RELEASE_VERSION variable
+    # GITHUB_REF will be something like refs/tags/haptic2ahap-0.3.0. This step extracts
+    # the last part, haptic2ahap-0.3.0, into a RELEASE_TAG variable, and the version,
+    # 0.3.0, into a RELEASE_VERSION variable
     - name: Extract version from tag
       run: |
         echo RELEASE_TAG=${GITHUB_REF#refs/*/} >> $GITHUB_ENV
@@ -32,22 +32,12 @@ jobs:
       run: ./release-haptic2ahap.sh ${{ env.RELEASE_VERSION }}
 
     - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.RELEASE_TAG }}
-        release_name: ${{ env.RELEASE_TAG }}
+        name: ${{ env.RELEASE_TAG }}
         draft: false
         prerelease: false
-
-    - name: Upload GitHub Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release/${{ env.RELEASE_TAG }}.zip
-        asset_name: ${{ env.RELEASE_TAG }}.zip
-        asset_content_type: application/zip
+        files: ./release/${{ env.RELEASE_TAG }}.zip

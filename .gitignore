@@ -27,3 +27,4 @@ core/api/lofelt-sdk.h
 # Rust code coverage files
 default.profdata
 default.profraw
+.github/workflows/.idea
